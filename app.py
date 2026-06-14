@@ -6,6 +6,11 @@ import xml.etree.ElementTree as ET
 from email.mime.text import MIMEText
 from google import genai
 
+from datetime import datetime
+
+today = datetime.now().strftime("%d %b %Y")
+
+
 EMAIL_USER = os.environ["EMAIL_USER"]
 EMAIL_PASSWORD = os.environ["EMAIL_PASSWORD"]
 GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
@@ -72,7 +77,7 @@ summary = response.text
 
 msg = MIMEText(summary)
 
-msg["Subject"] = "⚽ FIFA World Cup Daily Digest"
+msg["Subject"] = f"⚽ FIFA World Cup Briefing | {today}"
 msg["From"] = EMAIL_USER
 msg["To"] = "amanbaweja007@gmail.com"
 
