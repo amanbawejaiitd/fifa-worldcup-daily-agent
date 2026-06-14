@@ -19,7 +19,6 @@ response = requests.get(url)
 
 print(response.text)
 
-print(response.text)
 
 events = response.json().get("events", [])
 
