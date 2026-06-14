@@ -17,7 +17,9 @@ url = f"https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id={LEAGU
 
 response = requests.get(url)
 
-events = response.json()["events"]
+print(response.text)
+
+events = response.json().get("events", [])
 
 match_text = ""
 
