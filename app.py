@@ -34,22 +34,33 @@ for item in items[:10]:
         news_text += f"- {title.text}\n"
 
 prompt = f"""
-You are a football analyst.
+You are a world-class football journalist.
 
-Here are the latest FIFA World Cup headlines:
+Using the news below, create an engaging daily FIFA World Cup briefing.
+
+Structure:
+
+🏆 Tournament Headlines
+
+🔥 Biggest Story
+
+📊 Yesterday's Results
+- Mention scores if available
+- Mention goalscorers if available
+- State whether the result was expected or an upset
+
+⭐ Players to Watch
+- Mention club team
+
+📅 Today's Key Matches
+
+🎯 Prediction of the Day
+
+Write in a professional sports-journalism style.
+
+News:
 
 {news_text}
-
-Create a daily email containing:
-
-1. Key developments
-2. Important match results if mentioned
-3. Upcoming storylines
-4. Players or teams to watch
-
-Keep it under 250 words.
-
-Use bullet points.
 """
 
 response = client.models.generate_content(
@@ -63,7 +74,7 @@ msg = MIMEText(summary)
 
 msg["Subject"] = "⚽ FIFA World Cup Daily Digest"
 msg["From"] = EMAIL_USER
-msg["To"] = EMAIL_USER
+msg["To"] = "amanbaweja007@gmail.com"
 
 with smtplib.SMTP_SSL(
     "smtp.gmail.com",
