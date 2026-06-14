@@ -19,8 +19,7 @@ response = requests.get(url)
 
 print(response.text)
 
-
-events = response.json().get("events", [])
+events = response.json().
 
 match_text = ""
 
