@@ -1,6 +1,7 @@
 import os
 import requests
 import smtplib
+import xml.etree.ElementTree as ET
 
 from email.mime.text import MIMEText
 from google import genai
@@ -11,47 +12,52 @@ GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
 
 client = genai.Client(api_key=GEMINI_API_KEY)
 
-LEAGUE_ID = "4843"
+# Google News RSS
+rss_url = (
+    "https://news.google.com/rss/search?"
+    "q=FIFA+World+Cup"
+)
 
-url = f"https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id={LEAGUE_ID}"
+rss = requests.get(rss_url)
 
-response = requests.get(url)
+root = ET.fromstring(rss.content)
 
-print(response.text)
+items = root.findall(".//item")
 
-events = response.json().
+news_text = ""
 
-match_text = ""
+for item in items[:10]:
 
-for event in events[:10]:
-    match_text += (
-        f"{event['dateEvent']} - "
-        f"{event['strHomeTeam']} vs "
-        f"{event['strAwayTeam']}\n"
-    )
+    title = item.find("title")
+
+    if title is not None:
+        news_text += f"- {title.text}\n"
 
 prompt = f"""
 You are a football analyst.
 
-Upcoming FIFA World Cup matches:
+Here are the latest FIFA World Cup headlines:
 
-{match_text}
+{news_text}
 
-Create a short email containing:
-1. Tournament overview
-2. Today's most important matches
-3. Teams to watch
-4. Latest score
+Create a daily email containing:
 
-Keep it under 200 words.
+1. Key developments
+2. Important match results if mentioned
+3. Upcoming storylines
+4. Players or teams to watch
+
+Keep it under 250 words.
+
+Use bullet points.
 """
 
-result = client.models.generate_content(
+response = client.models.generate_content(
     model="gemini-2.5-flash",
     contents=prompt
 )
 
-summary = result.text
+summary = response.text
 
 msg = MIMEText(summary)
 
@@ -71,4 +77,4 @@ with smtplib.SMTP_SSL(
 
     server.send_message(msg)
 
-print("Email sent")
+print("Email sent successfully")
